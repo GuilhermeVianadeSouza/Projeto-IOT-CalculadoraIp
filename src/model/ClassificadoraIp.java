@@ -4,14 +4,14 @@ public class ClassificadoraIp{
 	
 	private String ip;
 	private int cidr;
-	private int primeiroOcteto;
-	private int segundoOcteto;
-	private int terceiroOcteto;
-	private int quartoOcteto;
-	private StringBuilder mascaraBinaria;
+	private String primeiroOcteto;
+	private String segundoOcteto;
+	private String terceiroOcteto;
+	private String quartoOcteto;
+	private String mascaraBinaria;
 	private String mascaraDecimal;
-	private String ipClass;
-	private String subClasse;
+	private String ipClasse;
+	private double ipsubClasse;
 	
 	public String getIp() {
 		return ip;
@@ -23,18 +23,22 @@ public class ClassificadoraIp{
 		return cidr;
 	}
 	public void setCidr(int cidr) {
+		if (cidr < 0 || cidr> 32) {
+			throw new IllegalArgumentException("CIDR incorreto: seu cidr deve ser entre 0 a 32");
+		}
 		this.cidr = cidr;
 	}
 	public int getPrimeiroOcteto() {
-		return primeiroOcteto;
+		int primeiroOctetoInt = Integer.parseInt(primeiroOcteto);
+		return primeiroOctetoInt;
 	}
-	public void setPrimeiroOcteto(int primeiroOcteto) {
+	public void setPrimeiroOcteto(String primeiroOcteto) {
 		this.primeiroOcteto = primeiroOcteto;
 	}
-	public StringBuilder getMascaraBinaria() {
+	public String getMascaraBinaria() {
 		return mascaraBinaria;
 	}
-	public void setMascaraBinaria(StringBuilder mascaraBinaria) {
+	public void setMascaraBinaria(String mascaraBinaria) {
 		this.mascaraBinaria = mascaraBinaria;
 	}
 	public String getMascaraDecimal() {
@@ -43,64 +47,134 @@ public class ClassificadoraIp{
 	public void setMascaraDecimal(String mascaraDecimal) {
 		this.mascaraDecimal = mascaraDecimal;
 	}
-	public String getIpClass() {
-		return ipClass;
-	}
-	public void setIpClass(String ipClass) {
-		this.ipClass = ipClass;
-	}
-	
-	//Descobrir o que fazer nessa parte.
-	public ClassificadoraIp(String ip, int cidr) {
-		this.ip = ip;
-		this.cidr = cidr;
-		//Interger.parseInt() Transformar String em INT. (ip.split("\\.) [0]: Aqui a linha de cÃ³digo vai extrair o primeiro octeto de um endereÃ§o ip. A utilizaÃ§Ã£o do split("\\.") se deve para a separaÃ§ao da strig em questÃ£o em arrys de string que nesse caso como separador sera definido o ".". [0] Se faz presente para ele acessa o primeiro elemento do array que sera o primeiro octeto.
-		this.primeiroOcteto = Integer.parseInt(ip.split("\\.") [0]);
+	public String getIpClasse() {
 		
-}	    
-	// Aqui defino caso o primeiro octeto seja => (Maior ou igual) && (E) <= (Menor ou igual) para receber sua devida classe.
-	public void classificarIp() {
-		if (primeiroOcteto >= 1 && primeiroOcteto <= 127) {
-			ipClass = "A";
-		} else if (primeiroOcteto >= 128 && primeiroOcteto <=191) {
-			ipClass = "B";
-		} else if (primeiroOcteto >= 192 && primeiroOcteto <=223) {
-			ipClass = "C";
-		} else if (primeiroOcteto >= 224 && primeiroOcteto <= 239) {
-			ipClass = "D";
-		} else if (primeiroOcteto >= 240 && primeiroOcteto <= 255) {
-			ipClass = "E";
-		} else if (primeiroOcteto > 255) {
-			ipClass = "Invalido";
+		int primeiroOctetoInt = getPrimeiroOcteto();
+		if(primeiroOctetoInt >= 1 && primeiroOctetoInt <= 126)
+			ipClasse = "A";
+		else if (primeiroOctetoInt >= 128 && primeiroOctetoInt <= 191)
+			ipClasse = "B";
+		else if (primeiroOctetoInt >= 192 && primeiroOctetoInt <= 223)
+			ipClasse = "C";
+		else if (primeiroOctetoInt >= 224 && primeiroOctetoInt <= 239)
+			ipClasse = "D";
+		else if (primeiroOctetoInt >= 240 && primeiroOctetoInt <= 255)
+			ipClasse = "E";
+		else if (primeiroOctetoInt <1 || primeiroOctetoInt > 255)
+			throw new IllegalArgumentException("Não é possivel encontrar endereço IP utilizando-se um numero menor que 1 e maior que 255, por favor coloque um numero valido.");
+		return ipClasse;
+	}
+	
+	public int getSegundoOcteto() {
+		int segundoOctetoInt = Integer.parseInt(segundoOcteto);
+		return segundoOctetoInt;
+	}
+	
+	public void setSegundoOcteto (String segundoOcteto) {
+	this.segundoOcteto = segundoOcteto;
+	}
+	
+	public int getTerceiroOcteto() {
+		int terceiroOctetoInt = Integer.parseInt(terceiroOcteto);
+		return terceiroOctetoInt;
+	}
+	
+	public void setTerceiroOcteto (String terceiroOcteto) {
+	this.terceiroOcteto = terceiroOcteto;
+	}
+	
+	public int getQuartoOcteto() {
+		int quartoOctetoInt = Integer.parseInt(quartoOcteto);
+		return quartoOctetoInt;
+	}
+	
+	public void setQuartoOcteto (String quartoOcteto) {
+	this.quartoOcteto = quartoOcteto;
+	}
+	
+	public double getSubClasse() {
+		if (cidr > 32) {
+			System.out.println("Cidr maior que 32, não pode ser utilizado para a realização da conta, por favor insira um numero menor ou igual a 32");
+		} else if (cidr < 30) {
+			ipsubClasse = Math.pow(2, 32 - cidr) - 2;
+		} else {
+			ipsubClasse = Math.pow(2, 32 - cidr);
 		}
 		
-		//Calculo para mostrar os IPs disponÃ­veis
-		int ipsDisponiveis = (int) Math.pow (2, 32 - cidr) - 2;
-		System.out.println("Classe do Ip: " + ipClass);
-		System.out.println("Ips disponÃ­veis: " + ipsDisponiveis);
+		return ipsubClasse;
 	}
 	
-	//geraÃ§Ã£o da mÃ¡scara de sub-rede
-	private String gerarMascara(int cidr) {
-		if (cidr < 0 | cidr > 32) {
-			return "Mascara invalida";
-		}
-		//Stringbuilder me permite manipular dados de Strings dinamicamente, para criaÃ§Ã£o de variaveis de string modificaveis.
-		StringBuilder mascaraBin = new StringBuilder();{
-			for (int i = 0; i < 32; i++) {
-				if (i < cidr) {
-					//.append: utilizado nesse contexto para adicionar dados ao objeto StringBuilder.
-					mascaraBin.append("1");
-				} else {
-					mascaraBin.append("0");
-				}
-			}
-			return mascaraBin.toString();
-		}
+	public int getSubRedes() {
+	    int cidrBase = 0;
+
+	    switch (getIpClasse()) {
+	        case "A":
+	            cidrBase = 8;
+	            break;
+	        case "B":
+	            cidrBase = 16;
+	            break;
+	        case "C":
+	            cidrBase = 24; break;
+	        default: return 0;
+	    }
+	    
+	    if (cidr < cidrBase) {
+	    	return 0;
+	    }
+
+	    return (int) Math.pow(2, cidr - cidrBase);
 	}
-}
+
+	
+	//geração da máscara de sub-rede
+	private StringBuilder gerarMascaraBin(int cidr) {
+		StringBuilder mascaraBinaria = new StringBuilder();
+		for (int i = 0; i < 32; i++) {
+			mascaraBinaria.append(i < cidr ? '1' : '0');
+		}
+		
+		return mascaraBinaria;
+	}
+	
+	public String gerarMascaraDecimal (StringBuilder binaria) {
+		
+		StringBuilder decimal = new StringBuilder();
+		
+		for (int i = 0; i < 4; i++) {
+			String octeto = binaria.substring(i * 8, (i + 1) * 8);
+			
+			decimal.append(Integer.parseInt(octeto, 2));
+			
+			if (i < 3)
+				decimal.append(".");
+		}
+		
+		return decimal.toString();
+	}
+	
+	public void mostrarDados() {
+		
+		mascaraBinaria = gerarMascaraBin(cidr).toString();
+		mascaraDecimal = gerarMascaraDecimal(new StringBuilder(mascaraBinaria));
+		ipClasse = getIpClasse();
+	
+		System.out.println("------------------------------------");
+		System.out.println("IP informado: " + primeiroOcteto + "." + segundoOcteto + "." + terceiroOcteto + "."
+				+ quartoOcteto + "/" + cidr);
+		System.out.println("Primeiro octeto: " + primeiroOcteto);
+		System.out.println("Classe do IP: " + "Classe " + ipClasse);
+		System.out.println("Máscara binária: " + mascaraBinaria);
+		System.out.println("Máscara decimal: " + mascaraDecimal);
+		System.out.println("IPs por sub-rede com /" + cidr + ": " + getSubClasse() + " IPs disponíveis");
+		System.out.println("Quantidade de sub-redes possíveis: " + getSubRedes());
+		System.out.println("------------------------------------");
+	}
+	
+	}
 	
 
 
 
+	    
 	    
