@@ -61,7 +61,7 @@ public class ClassificadoraIp{
 		else if (primeiroOctetoInt >= 240 && primeiroOctetoInt <= 255)
 			ipClasse = "E";
 		else if (primeiroOctetoInt <1 || primeiroOctetoInt > 255)
-			throw new IllegalArgumentException("Não é possivel encontrar endereço IP utilizando-se um numero menor que 1 e maior que 255, por favor coloque um numero valido.");
+			throw new IllegalArgumentException("Nï¿½o ï¿½ possivel encontrar endereï¿½o IP utilizando-se um numero menor que 1 e maior que 255, por favor coloque um numero valido.");
 		return ipClasse;
 	}
 	
@@ -94,7 +94,7 @@ public class ClassificadoraIp{
 	
 	public double getSubClasse() {
 		if (cidr > 32) {
-			System.out.println("Cidr maior que 32, não pode ser utilizado para a realização da conta, por favor insira um numero menor ou igual a 32");
+			System.out.println("Cidr maior que 32, nï¿½o pode ser utilizado para a realizaï¿½ï¿½o da conta, por favor insira um numero menor ou igual a 32");
 		} else if (cidr < 30) {
 			ipsubClasse = Math.pow(2, 32 - cidr) - 2;
 		} else {
@@ -127,7 +127,7 @@ public class ClassificadoraIp{
 	}
 
 	
-	//geração da máscara de sub-rede
+	//geraï¿½ï¿½o da mï¿½scara de sub-rede
 	private StringBuilder gerarMascaraBin(int cidr) {
 		StringBuilder mascaraBinaria = new StringBuilder();
 		for (int i = 0; i < 32; i++) {
@@ -153,6 +153,42 @@ public class ClassificadoraIp{
 		return decimal.toString();
 	}
 	
+	private int ipParaDecimal(String ip) {
+	    String[] octetos = ip.split("\\.");
+	    int resultado = 0;
+	    for (int i = 0; i < 4; i++) {
+	        resultado |= (Integer.parseInt(octetos[i]) << (24 - (i * 8)));
+	    }
+	    return resultado;
+	}
+
+	
+	private String decimalParaIp(int ipDecimal) {
+	    return ((ipDecimal >> 24) & 0xFF) + "." +
+	           ((ipDecimal >> 16) & 0xFF) + "." +
+	           ((ipDecimal >> 8) & 0xFF) + "." +
+	           (ipDecimal & 0xFF);
+	}
+
+	
+	public void listarSubRedes() {
+	    int ipDecimal = ipParaDecimal(ip);
+	    int quantidadeSubRedes = getSubRedes();
+	    int blocos = (int) Math.pow(2, (32 - cidr)); // Tamanho do bloco
+	    
+	    System.out.println("\n--- Lista de Sub-redes ---");
+	    
+	    for (int i = 0; i < quantidadeSubRedes; i++) {
+	        int inicio = ipDecimal + (i * blocos);
+	        int fim = inicio + blocos - 1;
+	        
+	        System.out.println("Sub-rede " + (i + 1) + ": "
+	                + decimalParaIp(inicio) + " - "
+	                + decimalParaIp(fim));
+	    }
+	}
+
+	
 	public void mostrarDados() {
 		
 		mascaraBinaria = gerarMascaraBin(cidr).toString();
@@ -164,10 +200,10 @@ public class ClassificadoraIp{
 				+ quartoOcteto + "/" + cidr);
 		System.out.println("Primeiro octeto: " + primeiroOcteto);
 		System.out.println("Classe do IP: " + "Classe " + ipClasse);
-		System.out.println("Máscara binária: " + mascaraBinaria);
-		System.out.println("Máscara decimal: " + mascaraDecimal);
-		System.out.println("IPs por sub-rede com /" + cidr + ": " + getSubClasse() + " IPs disponíveis");
-		System.out.println("Quantidade de sub-redes possíveis: " + getSubRedes());
+		System.out.println("Mï¿½scara binï¿½ria: " + mascaraBinaria);
+		System.out.println("Mï¿½scara decimal: " + mascaraDecimal);
+		System.out.println("IPs por sub-rede com /" + cidr + ": " + getSubClasse() + " IPs disponï¿½veis");
+		System.out.println("Quantidade de sub-redes possï¿½veis: " + getSubRedes());
 		System.out.println("------------------------------------");
 	}
 	
